@@ -19,6 +19,7 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
+        dbName: configService.get<string>('MONGODB_DB'),
       }),
     }),
     UsersModule,
