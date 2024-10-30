@@ -3,6 +3,7 @@
     "nest",
     "vscode",
     "npm",
-    "log"
+    "log",
+    "config"
   ]
 }
