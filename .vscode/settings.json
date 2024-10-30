@@ -2,6 +2,7 @@
   "conventionalCommits.scopes": [
     "nest",
     "vscode",
-    "npm"
+    "npm",
+    "log"
   ]
 }
