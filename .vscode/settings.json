@@ -4,6 +4,8 @@
     "vscode",
     "npm",
     "log",
-    "config"
+    "config",
+    "mongo",
+    "users"
   ]
 }
