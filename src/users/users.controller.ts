@@ -8,14 +8,17 @@ import {
   Body,
   Param,
   UseGuards,
-  UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './schema/user.schema';
 import { JwtAuthGuard } from '@src/auth/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { ApiResponse } from '@src/common/response/api-response';
+import { TransformInterceptor } from '@src/common/interceptors/transform.interceptor';
 
 @Controller('users')
+@UseInterceptors(TransformInterceptor)
 export class UsersController {
   constructor(
     private readonly userService: UsersService,
@@ -28,20 +31,23 @@ export class UsersController {
     @Body('email') email: string,
     @Body('age') age: number,
     @Body('password') password: string,
-  ): Promise<Omit<User, 'password'>> {
-    return this.userService.createUser(name, email, age, password);
+  ): Promise<ApiResponse<Omit<User, 'password'>>> {
+    const user = await this.userService.createUser(name, email, age, password);
+    return ApiResponse.success(user, 'User created successfully', 201);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUsers(): Promise<User[]> {
-    return this.userService.getUsers();
+  async getUsers(): Promise<ApiResponse<User[]>> {
+    const users = await this.userService.getUsers();
+    return ApiResponse.success(users, 'Users retrieved successfully');
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async getUser(@Param('id') id: string): Promise<User> {
-    return this.userService.getUserById(id);
+  async getUser(@Param('id') id: string): Promise<ApiResponse<User>> {
+    const user = await this.userService.getUserById(id);
+    return ApiResponse.success(user, 'User retrieved successfully');
   }
 
   @Patch(':id')
@@ -49,8 +55,9 @@ export class UsersController {
   async updateUser(
     @Param('id') id: string,
     @Body() updateData: Partial<User>,
-  ): Promise<User> {
-    return this.userService.updateUser(id, updateData);
+  ): Promise<ApiResponse<User>> {
+    const updatedUser = await this.userService.updateUser(id, updateData);
+    return ApiResponse.success(updatedUser, 'User updated successfully');
   }
 
   @Put(':id')
@@ -58,29 +65,33 @@ export class UsersController {
   async replaceUser(
     @Param('id') id: string,
     @Body() userData: Omit<User, '_id'>,
-  ): Promise<User> {
-    return this.userService.replaceUser(id, userData);
+  ): Promise<ApiResponse<User>> {
+    const replacedUser = await this.userService.replaceUser(id, userData);
+    return ApiResponse.success(replacedUser, 'User replaced successfully');
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async deleteUser(@Param('id') id: string): Promise<void> {
-    return this.userService.deleteUser(id);
+  async deleteUser(@Param('id') id: string): Promise<ApiResponse<void>> {
+    await this.userService.deleteUser(id);
+    return ApiResponse.success(undefined, 'User deleted successfully', 200);
   }
 
   @Post('signin')
   async signIn(
     @Body('email') email: string,
     @Body('password') password: string,
-  ) {
+  ): Promise<ApiResponse<{ access_token: string } | null>> {
+    // Changed return type here
     const user = await this.userService.validateUser(email, password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      return ApiResponse.error('Invalid credentials', 401);
     }
 
     const payload = { email: user.email, sub: user._id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return ApiResponse.success(
+      { access_token: this.jwtService.sign(payload) },
+      'Sign in successful',
+    );
   }
 }

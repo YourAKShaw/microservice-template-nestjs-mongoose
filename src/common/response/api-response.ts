@@ -17,15 +17,12 @@ export class ApiResponse<T> {
     this.status = status;
     this.message = message;
     this.statusCode = statusCode;
-
     if (data !== undefined && data !== null) {
       this.data = data;
     }
-
     if (meta !== undefined && meta !== null) {
       this.meta = meta;
     }
-
     if (error !== undefined && error !== null) {
       this.error = error;
     }
@@ -41,10 +38,10 @@ export class ApiResponse<T> {
     return new ApiResponse<T>('success', message, statusCode, data, meta);
   }
 
-  // Static method to create an error response (statusCode is used as error code)
+  // Static method to create an error response
   static error(
     message: string,
-    statusCode = 400, // Interchangeable with errorCode
+    statusCode = 400,
     error?: any,
   ): ApiResponse<null> {
     return new ApiResponse<null>(
@@ -57,26 +54,22 @@ export class ApiResponse<T> {
     );
   }
 
-  // Converts the response to plain JSON object excluding undefined or null values
+  // Converts the response to plain JSON object
   toJSON() {
     const responseObject: any = {
       status: this.status,
       message: this.message,
       statusCode: this.statusCode,
     };
-
     if (this.data !== undefined) {
       responseObject.data = this.data;
     }
-
     if (this.meta !== undefined) {
       responseObject.meta = this.meta;
     }
-
     if (this.error !== undefined) {
       responseObject.error = this.error;
     }
-
     return responseObject;
   }
 }
