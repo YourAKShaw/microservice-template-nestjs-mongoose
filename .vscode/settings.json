@@ -6,6 +6,7 @@
     "log",
     "config",
     "mongo",
-    "users"
+    "users",
+    "env"
   ]
 }

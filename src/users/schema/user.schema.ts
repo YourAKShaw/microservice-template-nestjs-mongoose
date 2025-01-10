@@ -11,6 +11,9 @@ export class User extends Document {
 
   @Prop()
   age!: number;
+
+  @Prop({ required: true })
+  password!: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
