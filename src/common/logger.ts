@@ -85,7 +85,7 @@ export default class CustomLogger {
       });
 
       return (
-        `${chalk.green('[Winston]')}    ` +
+        `${chalk.green('[Winston]')}     ` +
         `${chalk.green('-')} ${timestamp}     ` +
         `${chalk.green('LOG')} ` +
         `${chalk.yellow(`[${this.context}]`)} ` +
