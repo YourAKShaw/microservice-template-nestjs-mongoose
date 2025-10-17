@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
-import CustomLogger from '@src/common/logger';
 import { configValidationSchema } from '@src/config/config.validation';
 import { UsersModule } from './users/users.module';
 
@@ -25,12 +24,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: CustomLogger,
-      useClass: CustomLogger,
-    },
-  ],
+  providers: [AppService],
+  exports: [],
 })
 export class AppModule {}
